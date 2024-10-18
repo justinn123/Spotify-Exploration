@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, request, session, url_for
 
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
