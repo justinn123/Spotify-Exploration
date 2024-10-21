@@ -6,8 +6,6 @@ from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.cache_handler import FlaskSessionCacheHandler
 
-
-
 from credentials import client_id, client_secret 
 
 app = Flask(__name__)
@@ -38,8 +36,16 @@ def home():
 
 @app.route('/callback')
 def callback():
+    error = request.args.get('error')
+    if error:
+        return redirect(url_for('error_page'))
     sp_oauth.get_access_token(request.args['code'])
     return redirect(url_for('get_top_songs'))
+
+@app.route('/error_page')
+def error_page():
+    html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Error</title></head><body><h1>There was an error</h1></body></html>'
+    return html
 
 @app.route('/get_top_songs')
 def get_top_songs():
