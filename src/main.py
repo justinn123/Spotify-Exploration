@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, redirect, request, session, url_for
+from flask import Flask, redirect, request, session, url_for, render_template
 
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
@@ -53,15 +53,7 @@ def get_top_songs():
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
     top_songs = sp.current_user_top_tracks()
-    html_content = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Top Songs</title></head><body>'
-    html_content += '<h1>Your Top Songs</h1><ul>'
-    
-    for item in top_songs['items']:
-        html_content += f'<li>{item["name"]} by {item["artists"][0]["name"]}</li>'
-    
-    html_content += '</ul></body></html>'
-    
-    return html_content
+    return render_template('index.html', top_songs=top_songs)
 
 if __name__ == '__main__':
     app.run(debug=True)
