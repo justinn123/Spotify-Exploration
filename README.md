@@ -24,8 +24,8 @@ Then cd into src
 cd src
 ```
 
-Run main.py
+Run app.py
 ```shell
-py main.py
+py app.py
 ```
 
