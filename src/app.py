@@ -11,7 +11,7 @@ from credentials import client_id, client_secret
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(64)
 
-redirect_uri = "http://localhost:8000/callback"
+redirect_uri = "http://localhost:5000/callback"
 scope = 'user-top-read'
 
 cache_handler = FlaskSessionCacheHandler(session)
@@ -56,7 +56,7 @@ def get_top_songs():
     return render_template('index.html', top_songs=top_songs)
 
 if __name__ == '__main__':
-    app.run(port = 8000, debug=True)
+    app.run(port = 5000, debug=True)
 
 
 
