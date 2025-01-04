@@ -40,7 +40,7 @@ def callback():
     if error:
         return redirect(url_for('error_page'))
     sp_oauth.get_access_token(request.args['code'])
-    return redirect(url_for('get_top_songs'))
+    return redirect(url_for('get_playlists'))
 
 @app.route('/error_page')
 def error_page():
@@ -54,6 +54,14 @@ def get_top_songs():
         return redirect(auth_url)
     top_songs = sp.current_user_top_tracks()
     return render_template('index.html', top_songs=top_songs)
+
+@app.route('/get_playlists')
+def get_playlists():
+    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
+        auth_url = sp_oauth.get_authorize_url()
+        return redirect(auth_url)
+    playlists = sp.current_user_playlists()
+    return render_template('playlists.html', playlists=playlists)
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)

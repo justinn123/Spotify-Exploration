@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Playlists</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
+        </ul>
+    </nav>
+
+    <h1>Your Spotify Playlists</h1>
+    {% if playlists and playlists['items'] %}
+        <ul style="list-style: none;">
+            {% for playlist in playlists['items'] %}
+                <li>
+                    <h2>{{ playlist['name'] }}</h2>
+                    <p><strong>Owner:</strong> {{ playlist['owner']['display_name'] }}</p>
+                    <p><strong>Tracks:</strong> {{ playlist['tracks']['total'] }}</p>
+                    <a href="{{ playlist['external_urls']['spotify'] }}" target="_blank">View on Spotify</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No playlists found.</p>
+    {% endif %}
+</body>
+</html>
