@@ -9,12 +9,12 @@
 <body>
     <nav>
         <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('get_top_songs') }}">Top Songs</a></li>
             <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
         </ul>
     </nav>
 
-    <h1>Your Spotify Playlists</h1>
+    <h1>Your Saved Spotify Playlists</h1>
     {% if playlists and playlists['items'] %}
         <ul style="list-style: none;">
             {% for playlist in playlists['items'] %}
