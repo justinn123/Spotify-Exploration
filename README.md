@@ -8,10 +8,10 @@ This is a Flask App and utilizes the Spotipy, a lightweight Python library for t
 This library supports the usage of all the features of the Spotify Web API as well as support for user
 authorization. For the machine learning part of the project, Scikit Learn will be used for content based filtering. 
 
-# Links
+### Links
 [Flask Documentation](https://flask.palletsprojects.com/en/stable/)\
 [Spotipy Documentation](https://spotipy.readthedocs.io/en/2.25.0/)\
-[Spotify Web API](https://developer.spotify.com/documentation/web-api)\
+[Spotify Web API](https://developer.spotify.com/documentation/web-api)
 
 
 ## Installation
