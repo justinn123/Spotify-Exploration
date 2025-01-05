@@ -3,6 +3,17 @@
 ## Description
 Spotify Exploration will allow users to see their most play songs and artists and make suggestions based on that list
 
+## Technology
+This is a Flask App and utilizes the Spotipy, a lightweight Python library for the Spotify Web API.
+This library supports the usage of all the features of the Spotify Web API as well as support for user
+authorization. For the machine learning part of the project, Scikit Learn will be used for content based filtering. 
+
+# Links
+[Flask Documentation](https://flask.palletsprojects.com/en/stable/)
+[Spotipy Documentation](https://spotipy.readthedocs.io/en/2.25.0/)
+[Spotify Web API](https://developer.spotify.com/documentation/web-api)
+
+
 ## Installation
 First clone repo
 ```shell
@@ -18,14 +29,8 @@ Then download dependencies
 pip install -r requirements.txt
 ```
 
-Next ask me for the credentials.py file and once received, place into src folder\
-Then cd into src
-```shell
-cd src
-```
-
 Run app.py
 ```shell
-py app.py
+py run.py
 ```
 
