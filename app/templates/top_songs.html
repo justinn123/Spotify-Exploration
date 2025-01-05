@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Top Songs</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <title>Document</title>
 </head>
 <body>
     <nav>
@@ -13,6 +13,11 @@
             <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
         </ul>
     </nav>
-    <h1>Welcome, User</h1>
+    <h1>Your Top Songs</h1>
+    <ol>
+        {% for item in top_songs['items'] %}
+            <li>{{item.name}} by {{item.artists[0].name }}</li>
+        {%endfor%}
+    </ol>
 </body>
 </html>
