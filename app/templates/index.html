@@ -13,6 +13,20 @@
             <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
         </ul>
     </nav>
-    <h1>Welcome, User</h1>
+    <h1>Welcome, {{username}}</h1>
+
+    <h1>Currently Playing</h1>
+    <img src="{{current_playing['item']['album']['images'][0]['url']}}" 
+    alt="Album Artwork" style="height: 200px; width: 200px">
+    <p><strong>Track: </strong>{{current_playing['item']['name']}}</p>
+    <p><strong>Artists: </strong>
+        {% for artist in current_playing['item']['artists'] %}
+            {% if loop.first %}
+                {{ artist['name'] }}
+            {% else %}
+                , {{ artist['name'] }}
+            {% endif %}
+        {% endfor %}
+    </p>
 </body>
 </html>

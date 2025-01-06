@@ -35,9 +35,11 @@ def error_page():
 
 @app.route('/home')
 def index():
-    return render_template('index.html')
+    current_playing = sp.current_user_playing_track()
+    return render_template('index.html', username=sp.current_user()['display_name'], 
+                           current_playing=current_playing)
 
-@app.route('/get_top_songs')
+@app.route('/TopSongs')
 def get_top_songs():
     if not sp_oauth.validate_token(cache_handler.get_cached_token()):
         auth_url = sp_oauth.get_authorize_url()
@@ -45,10 +47,12 @@ def get_top_songs():
     top_songs = sp.current_user_top_tracks()
     return render_template('top_songs.html', top_songs=top_songs)
 
-@app.route('/get_playlists')
+@app.route('/Playlists')
 def get_playlists():
     if not sp_oauth.validate_token(cache_handler.get_cached_token()):
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
     playlists = sp.current_user_playlists()
-    return render_template('playlists.html', playlists=playlists)
+    current_playing = sp.current_user_playing_track()
+    return render_template('playlists.html', playlists=playlists, 
+                           current_user = sp.current_user())
