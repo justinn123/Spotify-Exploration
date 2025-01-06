@@ -1,5 +1,8 @@
 from flask import Flask
+from flask_socketio import SocketIO
 from config import Config
+
+socketio = SocketIO()
 
 def create_app():
     app = Flask(__name__)
@@ -8,4 +11,5 @@ def create_app():
     with app.app_context():
         from . import routes
 
+    socketio.init_app(app)
     return app

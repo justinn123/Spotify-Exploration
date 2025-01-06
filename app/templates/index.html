@@ -5,29 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
     <nav>
         <ul>
-            <li><a href="{{url_for('home')}}">Home</a></li>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('get_top_songs') }}">Top Songs</a></li>
             <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
         </ul>
     </nav>
-    <h1>Welcome, {{username}}</h1>
+    <h1>Welcome, {{ username }}</h1>
 
     <h1>Currently Playing</h1>
-    <img src="{{current_playing['item']['album']['images'][0]['url']}}" 
+    <img id="album-artwork" src="{{ current_playing['item']['album']['images'][0]['url'] }}" 
     alt="Album Artwork" style="height: 200px; width: 200px">
-    <p><strong>Track: </strong>{{current_playing['item']['name']}}</p>
-    <p><strong>Artists: </strong>
+    <p><strong>Track: </strong><span id="track-name">{{ current_playing['item']['name'] }}</span></p>
+    <p><strong>Artists: </strong><span id="artist-name">
         {% for artist in current_playing['item']['artists'] %}
-            {% if loop.first %}
-                {{ artist['name'] }}
+            {% if not loop.last %}
+                {{ artist['name'] }},
             {% else %}
-                , {{ artist['name'] }}
+                {{ artist['name'] }}
             {% endif %}
         {% endfor %}
-    </p>
+    </span></p>
+
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            socket.emit('request_current_playing');
+        });
+
+        socket.on('update_current_playing', (data) => {
+            const albumArtworkElement = document.getElementById('album-artwork');
+            const trackNameElement = document.getElementById('track-name');
+            const artistNameElement = document.getElementById('artist-name');
+
+            if (data.item) {
+                albumArtworkElement.src = data.item.album.images[0].url;
+                trackNameElement.textContent = data.item.name;
+                const artists = data.item.artists.map(artist => artist.name).join(', ');
+                artistNameElement.textContent = artists;
+            } else {
+                albumArtworkElement.src = 'https://cdn.chatfai.com/public_characters/D2ubMNsMyaZHvfQEwcz4uuOir2P2/f65ad656-1a0b-4006-b250-80a2dee62270ab67616d0000b2733aecad4bb7cbd784f92d2f9a.jpeg';
+                trackNameElement.textContent = 'No song currently playing';
+                artistNameElement.textContent = 'No artist';
+            }
+        });
+
+        // Optionally, you can request updates at regular intervals
+        setInterval(() => {
+            socket.emit('request_current_playing');
+        }, 10000);
+    </script>
 </body>
 </html>
