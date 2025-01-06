@@ -1,0 +1,14 @@
+backend:
+    functions:
+        - entry: ./run.py
+          handler: app
+          name: flask
+          path: .
+          type: httpServer
+    language:
+        name: python
+        packageManager: pip
+    path: ./app/
+name: chocolate-successful-cephalopod
+region: us-east-1
+yamlVersion: 2
