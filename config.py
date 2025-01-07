@@ -7,7 +7,7 @@ class Config:
     SECRET_KEY = os.urandom(64)
     SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
     SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
-    SPOTIPY_REDIRECT_URI = "https://spotify-exploration-73snuh2ni-ragingazians-projects.vercel.app/callback"
+    SPOTIPY_REDIRECT_URI = "https://spotify-exploration-981mlofb1-ragingazians-projects.vercel.app/callback"
     SPOTIPY_SCOPE = '''user-top-read user-library-read 
     playlist-read-private 
     user-read-playback-state 
