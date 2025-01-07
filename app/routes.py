@@ -32,8 +32,7 @@ def callback():
 
     code = request.args.get('code')
     if not code:
-        app.logger.error("Error: No authorization code received.")
-        return "Error: No authorization code received."
+        return redirect(url_for('error_page'))
 
     try:
         token_info = sp_oauth.get_access_token(code)
@@ -41,7 +40,7 @@ def callback():
         return redirect(url_for('index'))
     except Exception as e:
         app.logger.error(f"Error during token exchange: {str(e)}")
-        return f"Error during token exchange: {str(e)}"
+        return redirect(url_for('error_page'))
 
 
 
