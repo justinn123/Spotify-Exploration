@@ -22,23 +22,32 @@ def home():
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
     return redirect(url_for('index'))
+
 @app.route('/callback')
 def callback():
+    # Check if there was an error in the OAuth process
     error = request.args.get('error')
     if error:
-        return f"Error during authentication: {error}"
+        return redirect(url_for('error_page'))
 
+    # Get the authorization code from the URL parameters
     code = request.args.get('code')
     if not code:
-        return "Authorization code missing, please try again."
+        return "Error: No authorization code received."
 
     try:
+        # Exchange the authorization code for an access token
         token_info = sp_oauth.get_access_token(code)
-        # Store token info (e.g., session or cache)
+        
+        # Store token_info in the session (or elsewhere if needed)
         session['token_info'] = token_info
+
+        # Redirect to the main page or any other page as needed
         return redirect(url_for('index'))
     except Exception as e:
-        return f"Error retrieving access token: {str(e)}"
+        # Handle any errors that might occur during token exchange
+        return f"Error during token exchange: {str(e)}"
+
 
 @app.route('/error_page')
 def error_page():
