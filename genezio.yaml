@@ -2,16 +2,17 @@ name: scarlet-mobile-iguana
 region: us-east-1
 yamlVersion: 2
 backend:
-  # Root directory where `run.py` and `app/` are located
-  path: ./  
+  # Ensure that the root directory of your project is specified here
+  path: ./  # Root directory where `run.py` and `app/` are located
   language:
     name: python
     packageManager: pip
   functions:
-    # Function pointing to the root directory
     - name: flask
-      # The handler points to the app directory and its create_app function
-      handler: app.create_app  
-      # The entry point is now correctly pointing to `run.py` in the root directory
+      # Ensure that the handler is correctly pointing to the `create_app` function
+      handler: app.create_app  # Points to the `create_app` function in `app/__init__.py`
+      # `entry` should point to `run.py` in the root directory
       entry: run.py
+      # Ensure `path` points to the root directory where the function is located
+      path: ./  # Same root directory as above
       type: httpServer
