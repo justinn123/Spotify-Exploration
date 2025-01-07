@@ -23,13 +23,22 @@ def home():
         return redirect(auth_url)
     return redirect(url_for('index'))
 
-@app.route('/callback')
 def callback():
     error = request.args.get('error')
     if error:
-        return redirect(url_for('error_page'))
-    sp_oauth.get_access_token(request.args['code'])
-    return redirect(url_for('index'))
+        return f"Error during authentication: {error}"
+
+    code = request.args.get('code')
+    if not code:
+        return "Authorization code missing, please try again."
+
+    try:
+        token_info = sp_oauth.get_access_token(code)
+        # Store token info (e.g., session or cache)
+        session['token_info'] = token_info
+        return redirect(url_for('index'))
+    except Exception as e:
+        return f"Error retrieving access token: {str(e)}"
 
 @app.route('/error_page')
 def error_page():
