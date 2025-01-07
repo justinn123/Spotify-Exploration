@@ -1,6 +1,6 @@
 backend:
     functions:
-        - entry: run.py
+        - entry: ./run.py
           handler: app
           name: spotify-exploration-flask-app
           path: ./
