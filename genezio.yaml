@@ -2,13 +2,13 @@ name: scarlet-mobile-iguana
 region: us-east-1
 yamlVersion: 2
 backend:
-  path: ./
+  path: ./  # Ensure this points to the root of your project where the `app` directory exists
   language:
     name: python
     packageManager: pip
   functions:
     - name: flask
-      path: ./
-      handler: app.create_app  # Corrected handler pointing to create_app in __init__.py
+      path: ./app  # Path to the directory where `__init__.py` is located
+      handler: app.create_app  # This points to `app/create_app` in `__init__.py`
       entry: run.py
       type: httpServer
