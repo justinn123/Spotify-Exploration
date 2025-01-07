@@ -22,7 +22,7 @@ def home():
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
     return redirect(url_for('index'))
-
+@app.route('/callback')
 def callback():
     error = request.args.get('error')
     if error:
