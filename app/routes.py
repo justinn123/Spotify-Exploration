@@ -1,6 +1,4 @@
 from flask import redirect, request, session, url_for, render_template, current_app as app
-from flask_socketio import emit
-from . import socketio
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.cache_handler import FlaskSessionCacheHandler
