@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <title>Document</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
     <nav>
@@ -32,33 +31,31 @@
     </span></p>
 
     <script>
-        const socket = io();
+        function updateCurrentPlaying() {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const albumArtworkElement = document.getElementById('album-artwork');
+                    const trackNameElement = document.getElementById('track-name');
+                    const artistNameElement = document.getElementById('artist-name');
 
-        socket.on('connect', () => {
-            socket.emit('request_current_playing');
-        });
+                    const newAlbumArtworkElement = doc.getElementById('album-artwork');
+                    const newTrackNameElement = doc.getElementById('track-name');
+                    const newArtistNameElement = doc.getElementById('artist-name');
 
-        socket.on('update_current_playing', (data) => {
-            const albumArtworkElement = document.getElementById('album-artwork');
-            const trackNameElement = document.getElementById('track-name');
-            const artistNameElement = document.getElementById('artist-name');
+                    albumArtworkElement.src = newAlbumArtworkElement.src;
+                    trackNameElement.textContent = newTrackNameElement.textContent;
+                    artistNameElement.innerHTML = newArtistNameElement.innerHTML;
+                });
+        }
 
-            if (data.item) {
-                albumArtworkElement.src = data.item.album.images[0].url;
-                trackNameElement.textContent = data.item.name;
-                const artists = data.item.artists.map(artist => artist.name).join(', ');
-                artistNameElement.textContent = artists;
-            } else {
-                albumArtworkElement.src = 'https://cdn.chatfai.com/public_characters/D2ubMNsMyaZHvfQEwcz4uuOir2P2/f65ad656-1a0b-4006-b250-80a2dee62270ab67616d0000b2733aecad4bb7cbd784f92d2f9a.jpeg';
-                trackNameElement.textContent = 'No song currently playing';
-                artistNameElement.textContent = 'No artist';
-            }
-        });
+        // Request updates at regular intervals
+        setInterval(updateCurrentPlaying, 10000);
 
-        // Optionally, you can request updates at regular intervals
-        setInterval(() => {
-            socket.emit('request_current_playing');
-        }, 10000);
+        // Initial update
+        updateCurrentPlaying();
     </script>
 </body>
 </html>

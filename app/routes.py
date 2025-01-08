@@ -84,29 +84,6 @@ def get_top_songs():
     top_songs = sp.current_user_top_tracks()
     return render_template('top_songs.html', top_songs=top_songs)
 
-@socketio.on('connect')
-def handle_connect():
-    emit_current_playing()
-
-def emit_current_playing():
-    sp = get_spotify_client()
-    if not sp:
-        return
-    current_playing = sp.current_user_playing_track()
-    if current_playing is None or current_playing.get('item') is None:
-        current_playing = {
-            'item': {
-                'name': 'No song currently playing',
-                'album': {'images': [{'url': 'https://cdn.chatfai.com/public_characters/D2ubMNsMyaZHvfQEwcz4uuOir2P2/f65ad656-1a0b-4006-b250-80a2dee62270ab67616d0000b2733aecad4bb7cbd784f92d2f9a.jpeg'}]},
-                'artists': [{'name': 'No artist'}]
-            }
-        }
-    socketio.emit('update_current_playing', current_playing)
-
-@socketio.on('request_current_playing')
-def handle_request_current_playing():
-    emit_current_playing()
-
 @app.route('/Playlists')
 def get_playlists():
     sp = get_spotify_client()
