@@ -4,21 +4,33 @@ from . import socketio
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.cache_handler import FlaskSessionCacheHandler
+from config import Config
 
-cache_handler = FlaskSessionCacheHandler(session)
-sp_oauth = SpotifyOAuth(
-    client_id=app.config['SPOTIPY_CLIENT_ID'],
-    client_secret=app.config['SPOTIPY_CLIENT_SECRET'],
-    redirect_uri=app.config['SPOTIPY_REDIRECT_URI'],
-    scope=app.config['SPOTIPY_SCOPE'],
-    cache_handler=cache_handler,
-    show_dialog=True
-)
-sp = Spotify(auth_manager=sp_oauth)
+def get_spotify_oauth():
+    cache_handler = FlaskSessionCacheHandler(session)
+    return SpotifyOAuth(
+        client_id=Config.SPOTIPY_CLIENT_ID,
+        client_secret=Config.SPOTIPY_CLIENT_SECRET,
+        redirect_uri=Config.SPOTIPY_REDIRECT_URI,
+        scope=Config.SPOTIPY_SCOPE,
+        cache_handler=cache_handler,
+        show_dialog=True
+    )
+
+def get_spotify_client():
+    token_info = session.get('token_info', None)
+    if not token_info:
+        return None
+    sp_oauth = get_spotify_oauth()
+    if sp_oauth.is_token_expired(token_info):
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+        session['token_info'] = token_info
+    return Spotify(auth=token_info['access_token'])
 
 @app.route('/')
 def home():
-    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
+    if not session.get('token_info'):
+        sp_oauth = get_spotify_oauth()
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
     return redirect(url_for('index'))
@@ -35,6 +47,7 @@ def callback():
         return redirect(url_for('error_page'))
 
     try:
+        sp_oauth = get_spotify_oauth()
         token_info = sp_oauth.get_access_token(code)
         session['token_info'] = token_info
         return redirect(url_for('index'))
@@ -42,14 +55,15 @@ def callback():
         app.logger.error(f"Error during token exchange: {str(e)}")
         return redirect(url_for('error_page'))
 
-
-
 @app.route('/error_page')
 def error_page():
     return render_template('error.html')
 
 @app.route('/home')
 def index():
+    sp = get_spotify_client()
+    if not sp:
+        return redirect(url_for('home'))
     current_playing = sp.current_user_playing_track()
     if current_playing is None or current_playing.get('item') is None:
         current_playing = {
@@ -64,37 +78,40 @@ def index():
 
 @app.route('/TopSongs')
 def get_top_songs():
-    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
-        auth_url = sp_oauth.get_authorize_url()
-        return redirect(auth_url)
+    sp = get_spotify_client()
+    if not sp:
+        return redirect(url_for('home'))
     top_songs = sp.current_user_top_tracks()
     return render_template('top_songs.html', top_songs=top_songs)
 
-# @socketio.on('connect')
-# def handle_connect():
-#     emit_current_playing()
+@socketio.on('connect')
+def handle_connect():
+    emit_current_playing()
 
-# def emit_current_playing():
-#     current_playing = sp.current_user_playing_track()
-#     if current_playing is None or current_playing.get('item') is None:
-#         current_playing = {
-#             'item': {
-#                 'name': 'No song currently playing',
-#                 'album': {'images': [{'url': 'https://cdn.chatfai.com/public_characters/D2ubMNsMyaZHvfQEwcz4uuOir2P2/f65ad656-1a0b-4006-b250-80a2dee62270ab67616d0000b2733aecad4bb7cbd784f92d2f9a.jpeg'}]},
-#                 'artists': [{'name': 'No artist'}]
-#             }
-#         }
-#     socketio.emit('update_current_playing', current_playing)
+def emit_current_playing():
+    sp = get_spotify_client()
+    if not sp:
+        return
+    current_playing = sp.current_user_playing_track()
+    if current_playing is None or current_playing.get('item') is None:
+        current_playing = {
+            'item': {
+                'name': 'No song currently playing',
+                'album': {'images': [{'url': 'https://cdn.chatfai.com/public_characters/D2ubMNsMyaZHvfQEwcz4uuOir2P2/f65ad656-1a0b-4006-b250-80a2dee62270ab67616d0000b2733aecad4bb7cbd784f92d2f9a.jpeg'}]},
+                'artists': [{'name': 'No artist'}]
+            }
+        }
+    socketio.emit('update_current_playing', current_playing)
 
-# @socketio.on('request_current_playing')
-# def handle_request_current_playing():
-#     emit_current_playing()
+@socketio.on('request_current_playing')
+def handle_request_current_playing():
+    emit_current_playing()
 
 @app.route('/Playlists')
 def get_playlists():
-    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
-        auth_url = sp_oauth.get_authorize_url()
-        return redirect(auth_url)
+    sp = get_spotify_client()
+    if not sp:
+        return redirect(url_for('home'))
     playlists = sp.current_user_playlists()
     return render_template('playlists.html', playlists=playlists, 
-                           current_user = sp.current_user())
+                           current_user=sp.current_user())
