@@ -32,7 +32,7 @@
     </span></p>
 
     <script>
-        const socket = io();
+        const socket = io("https://spotify-exploration.vercel.app/home");
 
         socket.on('connect', () => {
             socket.emit('request_current_playing');

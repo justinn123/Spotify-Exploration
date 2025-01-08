@@ -11,5 +11,5 @@ def create_app():
     with app.app_context():
         from . import routes
 
-    socketio.init_app(app, cors_allowed_origins="*")
+    socketio.init_app(app)
     return app
