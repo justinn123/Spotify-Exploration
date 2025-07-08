@@ -1,13 +1,15 @@
 from dotenv import load_dotenv
+load_dotenv(dotenv_path=".env")
+
 import os
 
-load_dotenv()
+
 
 class Config:
-    SECRET_KEY = os.urandom(64)
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev")  # "dev" fallback only for dev/testing
     SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
     SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
-    SPOTIPY_REDIRECT_URI = "https://spotify-exploration.vercel.app/callback"
+    SPOTIPY_REDIRECT_URI = "http://localhost:5000/callback"
     SPOTIPY_SCOPE = '''user-top-read user-library-read 
     playlist-read-private 
     user-read-playback-state 

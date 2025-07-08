@@ -7,13 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('get_top_songs') }}">Top Songs</a></li>
-            <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
-        </ul>
-    </nav>
+    {% include 'nav.html' %}
     <h1>Welcome, {{ username }}</h1>
 
     <h1>Currently Playing</h1>

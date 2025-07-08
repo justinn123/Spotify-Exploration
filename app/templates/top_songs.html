@@ -7,12 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('get_top_songs') }}">Top Songs</a></li>
-            <li><a href="{{ url_for('get_playlists') }}">Playlists</a></li>
-        </ul>
-    </nav>
+    {% include 'nav.html' %}
     <h1>Your Top Songs</h1>
     <ol>
         {% for item in top_songs['items'] %}

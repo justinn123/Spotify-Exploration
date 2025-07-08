@@ -5,6 +5,9 @@ from spotipy.cache_handler import FlaskSessionCacheHandler
 from config import Config
 
 def get_spotify_oauth():
+    print("CLIENT_ID:", Config.SPOTIPY_CLIENT_ID)
+    print("CLIENT_SECRET:", Config.SPOTIPY_CLIENT_SECRET)
+    print("REDIRECT_URI:", Config.SPOTIPY_REDIRECT_URI)
     cache_handler = FlaskSessionCacheHandler(session)
     return SpotifyOAuth(
         client_id=Config.SPOTIPY_CLIENT_ID,
