@@ -9,7 +9,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev")  # "dev" fallback only for dev/testing
     SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
     SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
-    SPOTIPY_REDIRECT_URI = "http://localhost:5000/callback"
+    SPOTIPY_REDIRECT_URI = "https://spotify-exploration.vercel.app/callback"
     SPOTIPY_SCOPE = '''user-top-read user-library-read 
     playlist-read-private 
     user-read-playback-state 
