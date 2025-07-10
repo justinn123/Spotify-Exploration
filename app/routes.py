@@ -57,21 +57,23 @@ def get_spotify_oauth():
 def get_spotify_client():
     access_token = Config.STATIC_ACCESS_TOKEN
     refresh_token = Config.STATIC_REFRESH_TOKEN
+
+    if not access_token or not refresh_token:
+        app.logger.error("Missing Spotify tokens in config")
+        return None
+
     try:
         sp_oauth = get_spotify_oauth()
         token_info = {
             'access_token': access_token,
             'refresh_token': refresh_token,
-            'expires_at': 0  # Force refresh check
+            'expires_at': 0  # force refresh
         }
 
         if sp_oauth.is_token_expired(token_info):
             new_token_info = sp_oauth.refresh_access_token(refresh_token)
             token_info = new_token_info
-
-            # OPTIONAL: Update Config (in-memory) if needed
             Config.STATIC_ACCESS_TOKEN = token_info['access_token']
-
             update_env_token(token_info['access_token'])
 
         return Spotify(auth=token_info['access_token'])
@@ -80,19 +82,23 @@ def get_spotify_client():
         app.logger.error(f"Error getting Spotify client: {e}")
         return None
 
-def update_env_token(new_token):
-    import dotenv
-    import os
-    
-    dotenv_file = dotenv.find_dotenv()
-    dotenv.load_dotenv(dotenv_file)
-    
-    print(os.environ["STATIC_ACCESS_TOKEN"])  # outputs "value"
-    os.environ["STATIC_ACCESS_TOKEN"] = new_token
-    print(os.environ['STATIC_ACCESS_TOKEN'])  # outputs 'newvalue'
-    dotenv.set_key(dotenv_file, "STATIC_ACCESS_TOKEN", os.environ["STATIC_ACCESS_TOKEN"])  # Update the .env file
 
-# Write changes to .env file.
+def update_env_token(new_token):
+    import os
+    from dotenv import load_dotenv, set_key, find_dotenv
+
+    dotenv_path = find_dotenv()
+    if not dotenv_path:
+        raise FileNotFoundError(".env file not found")
+
+    load_dotenv(dotenv_path)
+
+    print("Old token:", os.getenv("STATIC_ACCESS_TOKEN"))
+    print("New token:", new_token)
+
+    set_key(dotenv_path, "STATIC_ACCESS_TOKEN", new_token)
+
+
 
 
 @app.route('/')
