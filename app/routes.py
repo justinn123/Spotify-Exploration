@@ -99,13 +99,13 @@ def update_env_token(new_token):
     updated = False
 
     for i, line in enumerate(lines):
-        if line.startswith("SPOTIFY_STATIC_ACCESS_TOKEN="):
-            lines[i] = f"SPOTIFY_STATIC_ACCESS_TOKEN={new_token}"
+        if line.startswith("STATIC_ACCESS_TOKEN="):
+            lines[i] = f"STATIC_ACCESS_TOKEN={new_token}"
             updated = True
             break
 
     if not updated:
-        lines.append(f"SPOTIFY_STATIC_ACCESS_TOKEN={new_token}")
+        lines.append(f"STATIC_ACCESS_TOKEN={new_token}")
 
     env_path.write_text("\n".join(lines))
 
