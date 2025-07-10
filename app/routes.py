@@ -70,15 +70,12 @@ def get_spotify_client():
             'expires_at': 0  # Force refresh check
         }
 
-        # Refresh if expired
         if sp_oauth.is_token_expired(token_info):
             new_token_info = sp_oauth.refresh_access_token(refresh_token)
             token_info = new_token_info
 
-            # OPTIONAL: Update Config (in-memory) if needed
             Config.STATIC_ACCESS_TOKEN = token_info['access_token']
 
-            # OPTIONAL: Write to .env to persist it
             update_env_token(token_info['access_token'])
 
         return Spotify(auth=token_info['access_token'])
@@ -88,26 +85,18 @@ def get_spotify_client():
         return None
 
 def update_env_token(new_token):
+    import dotenv
     import os
-    from pathlib import Path
+    
+    dotenv_file = dotenv.find_dotenv()
+    dotenv.load_dotenv(dotenv_file)
+    
+    print(os.environ["STATIC_ACCESS_TOKEN"])  # outputs "value"
+    os.environ["STATIC_ACCESS_TOKEN"] = new_token
+    print(os.environ['STATIC_ACCESS_TOKEN'])  # outputs 'newvalue'
+    dotenv.set_key(dotenv_file, "key", os.environ["STATIC_ACCESS_TOKEN"])  # Update the .env file
 
-    env_path = Path('.env')
-    if not env_path.exists():
-        return
-
-    lines = env_path.read_text().splitlines()
-    updated = False
-
-    for i, line in enumerate(lines):
-        if line.startswith("STATIC_ACCESS_TOKEN="):
-            lines[i] = f"STATIC_ACCESS_TOKEN={new_token}"
-            updated = True
-            break
-
-    if not updated:
-        lines.append(f"STATIC_ACCESS_TOKEN={new_token}")
-
-    env_path.write_text("\n".join(lines))
+# Write changes to .env file.
 
 
 @app.route('/')
