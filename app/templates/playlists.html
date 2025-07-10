@@ -15,7 +15,7 @@
         {% if playlists and playlists['items'] %}
         <ol>
             {% for playlist in playlists['items'] %}
-            {% if playlist['owner']['id'] == current_user['id'] %}
+            {% if playlist['owner']['id'] == current_user['id'] and playlist['public']%}
             <li class="playlist-item">
                 <div class="playlist-container">
                     <img src="{{ playlist['images'][0]['url'] }}" alt="Playlist cover" class="playlist-img">
