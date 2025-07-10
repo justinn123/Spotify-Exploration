@@ -55,50 +55,17 @@ def get_spotify_oauth():
 #         return redirect(url_for('error_page'))
 
 def get_spotify_client():
-    access_token = Config.STATIC_ACCESS_TOKEN
     refresh_token = Config.STATIC_REFRESH_TOKEN
-
-    if not access_token or not refresh_token:
-        app.logger.error("Missing Spotify tokens in config")
-        return None
-
     try:
         sp_oauth = get_spotify_oauth()
-        token_info = {
-            'access_token': access_token,
-            'refresh_token': refresh_token,
-            'expires_at': 0  # force refresh
-        }
+        token_info = sp_oauth.refresh_access_token(refresh_token)
 
-        if sp_oauth.is_token_expired(token_info):
-            new_token_info = sp_oauth.refresh_access_token(refresh_token)
-            token_info = new_token_info
-            Config.STATIC_ACCESS_TOKEN = token_info['access_token']
-            update_env_token(token_info['access_token'])
-
+        # Use the freshly generated access token
         return Spotify(auth=token_info['access_token'])
 
     except Exception as e:
         app.logger.error(f"Error getting Spotify client: {e}")
         return None
-
-
-def update_env_token(new_token):
-    import os
-    from dotenv import load_dotenv, set_key, find_dotenv
-
-    dotenv_path = find_dotenv()
-    if not dotenv_path:
-        raise FileNotFoundError(".env file not found")
-
-    load_dotenv(dotenv_path)
-
-    print("Old token:", os.getenv("STATIC_ACCESS_TOKEN"))
-    print("New token:", new_token)
-
-    set_key(dotenv_path, "STATIC_ACCESS_TOKEN", new_token)
-
-
 
 
 @app.route('/')
