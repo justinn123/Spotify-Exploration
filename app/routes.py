@@ -5,9 +5,6 @@ from spotipy.cache_handler import FlaskSessionCacheHandler
 from config import Config
 
 def get_spotify_oauth():
-    print("CLIENT_ID:", Config.SPOTIPY_CLIENT_ID)
-    print("CLIENT_SECRET:", Config.SPOTIPY_CLIENT_SECRET)
-    print("REDIRECT_URI:", Config.SPOTIPY_REDIRECT_URI)
     cache_handler = FlaskSessionCacheHandler(session)
     return SpotifyOAuth(
         client_id=Config.SPOTIPY_CLIENT_ID,
@@ -18,43 +15,65 @@ def get_spotify_oauth():
         show_dialog=True
     )
 
+# def get_spotify_client():
+#     token_info = session.get('token_info', None)
+#     if not token_info:
+#         return None
+#     sp_oauth = get_spotify_oauth()
+#     if sp_oauth.is_token_expired(token_info):
+#         token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+#         session['token_info'] = token_info
+#     return Spotify(auth=token_info['access_token'])
+
+# @app.route('/')
+# def home():
+#     if not session.get('token_info'):
+#         sp_oauth = get_spotify_oauth()
+#         auth_url = sp_oauth.get_authorize_url()
+#         return redirect(auth_url)
+#     return redirect(url_for('index'))
+
+# @app.route('/callback')
+# def callback():
+#     error = request.args.get('error')
+#     if error:
+#         app.logger.error(f"OAuth Error: {error}")
+#         return redirect(url_for('error_page'))
+
+#     code = request.args.get('code')
+#     if not code:
+#         return redirect(url_for('error_page'))
+
+#     try:
+#         sp_oauth = get_spotify_oauth()
+#         token_info = sp_oauth.get_access_token(code)
+#         session['token_info'] = token_info
+#         print("TOKEN INFO:", token_info)
+#         return redirect(url_for('index'))
+#     except Exception as e:
+#         app.logger.error(f"Error during token exchange: {str(e)}")
+#         return redirect(url_for('error_page'))
+
 def get_spotify_client():
-    token_info = session.get('token_info', None)
-    if not token_info:
-        return None
     sp_oauth = get_spotify_oauth()
+    token_info = {
+        'access_token': Config.STATIC_ACCESS_TOKEN,
+        'refresh_token': Config.STATIC_REFRESH_TOKEN,
+        'expires_at': 0
+    }
+    
     if sp_oauth.is_token_expired(token_info):
-        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
-        session['token_info'] = token_info
+        new_token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+        token_info = new_token_info
     return Spotify(auth=token_info['access_token'])
 
 @app.route('/')
 def home():
-    if not session.get('token_info'):
-        sp_oauth = get_spotify_oauth()
-        auth_url = sp_oauth.get_authorize_url()
-        return redirect(auth_url)
     return redirect(url_for('index'))
 
 @app.route('/callback')
 def callback():
-    error = request.args.get('error')
-    if error:
-        app.logger.error(f"OAuth Error: {error}")
-        return redirect(url_for('error_page'))
-
-    code = request.args.get('code')
-    if not code:
-        return redirect(url_for('error_page'))
-
-    try:
-        sp_oauth = get_spotify_oauth()
-        token_info = sp_oauth.get_access_token(code)
-        session['token_info'] = token_info
-        return redirect(url_for('index'))
-    except Exception as e:
-        app.logger.error(f"Error during token exchange: {str(e)}")
-        return redirect(url_for('error_page'))
+    return redirect(url_for('index'))
 
 @app.route('/error_page')
 def error_page():
@@ -64,7 +83,7 @@ def error_page():
 def index():
     sp = get_spotify_client()
     if not sp:
-        return redirect(url_for('home'))
+        return redirect(url_for('error_page'))
     current_playing = sp.current_user_playing_track()
     if current_playing is None or current_playing.get('item') is None:
         current_playing = {
@@ -82,7 +101,7 @@ def get_top_songs():
     sp = get_spotify_client()
     if not sp:
         return redirect(url_for('home'))
-    top_songs = sp.current_user_top_tracks()
+    top_songs = sp.current_user_top_tracks(time_range='short_term', limit=10)
     return render_template('top_songs.html', top_songs=top_songs)
 
 @app.route('/Playlists')
