@@ -55,17 +55,60 @@ def get_spotify_oauth():
 #         return redirect(url_for('error_page'))
 
 def get_spotify_client():
-    sp_oauth = get_spotify_oauth()
-    token_info = {
-        'access_token': Config.STATIC_ACCESS_TOKEN,
-        'refresh_token': Config.STATIC_REFRESH_TOKEN,
-        'expires_at': 0
-    }
-    
-    if sp_oauth.is_token_expired(token_info):
-        new_token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
-        token_info = new_token_info
-    return Spotify(auth=token_info['access_token'])
+    access_token = Config.STATIC_ACCESS_TOKEN
+    refresh_token = Config.STATIC_REFRESH_TOKEN
+
+    if not access_token or not refresh_token:
+        app.logger.error("Missing Spotify tokens in config")
+        return None
+
+    try:
+        sp_oauth = get_spotify_oauth()
+        token_info = {
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'expires_at': 0  # Force refresh check
+        }
+
+        # Refresh if expired
+        if sp_oauth.is_token_expired(token_info):
+            new_token_info = sp_oauth.refresh_access_token(refresh_token)
+            token_info = new_token_info
+
+            # OPTIONAL: Update Config (in-memory) if needed
+            Config.STATIC_ACCESS_TOKEN = token_info['access_token']
+
+            # OPTIONAL: Write to .env to persist it
+            update_env_token(token_info['access_token'])
+
+        return Spotify(auth=token_info['access_token'])
+
+    except Exception as e:
+        app.logger.error(f"Error getting Spotify client: {e}")
+        return None
+
+def update_env_token(new_token):
+    import os
+    from pathlib import Path
+
+    env_path = Path('.env')
+    if not env_path.exists():
+        return
+
+    lines = env_path.read_text().splitlines()
+    updated = False
+
+    for i, line in enumerate(lines):
+        if line.startswith("SPOTIFY_STATIC_ACCESS_TOKEN="):
+            lines[i] = f"SPOTIFY_STATIC_ACCESS_TOKEN={new_token}"
+            updated = True
+            break
+
+    if not updated:
+        lines.append(f"SPOTIFY_STATIC_ACCESS_TOKEN={new_token}")
+
+    env_path.write_text("\n".join(lines))
+
 
 @app.route('/')
 def home():
