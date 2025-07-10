@@ -57,11 +57,6 @@ def get_spotify_oauth():
 def get_spotify_client():
     access_token = Config.STATIC_ACCESS_TOKEN
     refresh_token = Config.STATIC_REFRESH_TOKEN
-
-    if not access_token or not refresh_token:
-        app.logger.error("Missing Spotify tokens in config")
-        return None
-
     try:
         sp_oauth = get_spotify_oauth()
         token_info = {
@@ -74,6 +69,7 @@ def get_spotify_client():
             new_token_info = sp_oauth.refresh_access_token(refresh_token)
             token_info = new_token_info
 
+            # OPTIONAL: Update Config (in-memory) if needed
             Config.STATIC_ACCESS_TOKEN = token_info['access_token']
 
             update_env_token(token_info['access_token'])
@@ -94,7 +90,7 @@ def update_env_token(new_token):
     print(os.environ["STATIC_ACCESS_TOKEN"])  # outputs "value"
     os.environ["STATIC_ACCESS_TOKEN"] = new_token
     print(os.environ['STATIC_ACCESS_TOKEN'])  # outputs 'newvalue'
-    dotenv.set_key(dotenv_file, "key", os.environ["STATIC_ACCESS_TOKEN"])  # Update the .env file
+    dotenv.set_key(dotenv_file, "STATIC_ACCESS_TOKEN", os.environ["STATIC_ACCESS_TOKEN"])  # Update the .env file
 
 # Write changes to .env file.
 
