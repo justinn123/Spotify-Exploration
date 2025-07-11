@@ -90,7 +90,7 @@ def index():
         current_playing = {
             'item': {
                 'name': 'No song currently playing',
-                'album': {'images': [{'url': 'https://cdn.chatfai.com/public_characters/D2ubMNsMyaZHvfQEwcz4uuOir2P2/f65ad656-1a0b-4006-b250-80a2dee62270ab67616d0000b2733aecad4bb7cbd784f92d2f9a.jpeg'}]},
+                'album': {'images': [{'url': sp.current_user()['images'][0]['url']}]},
                 'artists': [{'name': 'No artist'}]
             }
         }
