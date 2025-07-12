@@ -12,7 +12,7 @@
 
     <h1>Currently Playing</h1>
     <img id="album-artwork" src="{{ current_playing['item']['album']['images'][0]['url'] }}" 
-    alt="Album Artwork" style="height: 200px; width: 200px">
+    alt="Album Artwork" style="height: 500px; width: 500px">
     <p><strong>Track: </strong><span id="track-name">{{ current_playing['item']['name'] }}</span></p>
     <p><strong>Artists: </strong><span id="artist-name">
         {% for artist in current_playing['item']['artists'] %}
