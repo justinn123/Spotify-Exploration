@@ -105,6 +105,13 @@ p {
     list-style: none;
 }
 
+#track-name a {
+    color: #1db954; /* Spotify green for track names */
+}
+
+#artist-name a{
+    color: #1db954; /* Spotify green for artist names */
+}
 
 
 @media (max-width: 768px) {

@@ -86,7 +86,6 @@ def index():
     if not sp:
         return redirect(url_for('error_page'))
     current_playing = sp.current_user_playing_track()
-    print(current_playing)
     if current_playing is None or current_playing.get('item') is None or current_playing['item'].get('is_local'):
         current_playing = {
             'item': {

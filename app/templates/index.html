@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <title>Raging_Azian's Music</title>
 </head>
+
 <body>
     {% include 'nav.html' %}
     <h1>{{ username }}'s Music</h1>
 
     <h1>Currently Playing</h1>
-    <img id="album-artwork" src="{{ current_playing['item']['album']['images'][0]['url'] }}" 
-    alt="Album Artwork" style="height: 500px; width: 500px">
-    <p><strong>Track: </strong><span id="track-name">{{ current_playing['item']['name'] }}</span></p>
+    <img id="album-artwork" src="{{ current_playing['item']['album']['images'][0]['url'] }}" alt="Album Artwork"
+        style="height: 500px; width: 500px">
+    <p><strong>Track: </strong><span id="track-name">
+            <a href="{{ current_playing['item']['external_urls']['spotify'] }}">
+                {{ current_playing['item']['name'] }}
+            </a>
+        </span></p>
+
     <p><strong>Artists: </strong><span id="artist-name">
         {% for artist in current_playing['item']['artists'] %}
-            {% if not loop.last %}
-                {{ artist['name'] }},
-            {% else %}
-                {{ artist['name'] }}
-            {% endif %}
+            <a href="{{ artist['external_urls']['spotify'] }}">{{ artist['name'] }}</a>{% if not loop.last %}, {% endif %}
         {% endfor %}
     </span></p>
 
@@ -40,10 +43,12 @@
                     const newArtistNameElement = doc.getElementById('artist-name');
 
                     albumArtworkElement.src = newAlbumArtworkElement.src;
-                    trackNameElement.textContent = newTrackNameElement.textContent;
+
+                    trackNameElement.innerHTML = newTrackNameElement.innerHTML;
                     artistNameElement.innerHTML = newArtistNameElement.innerHTML;
                 });
         }
+
 
         // Request updates at regular intervals
         setInterval(updateCurrentPlaying, 10000);
@@ -52,4 +57,5 @@
         updateCurrentPlaying();
     </script>
 </body>
+
 </html>
