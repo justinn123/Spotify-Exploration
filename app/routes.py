@@ -111,5 +111,6 @@ def get_playlists():
     if not sp:
         return redirect(url_for('home'))
     playlists = sp.current_user_playlists()
+    print(playlists)
     return render_template('playlists.html', playlists=playlists, 
                            current_user=sp.current_user())

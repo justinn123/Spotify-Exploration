@@ -20,10 +20,9 @@
                 <div class="playlist-container">
                     <img src="{{ playlist['images'][0]['url'] }}" alt="Playlist cover" class="playlist-img">
                     <div class="playlist-details">
-                        <h2>{{ playlist['name'] }}</h2>
-                        <p><strong>Owner:</strong> {{ playlist['owner']['display_name'] }}</p>
+                        <h2><a href="{{ playlist['external_urls']['spotify'] }}" target="_blank">{{ playlist['name'] }}</a></h2>
+                        <p><strong>Owner: </strong><a href="https://open.spotify.com/user/qmf0k6enaxlvtpossw58c6ql5" target="_blank">{{ playlist['owner']['display_name'] }}</a></p>
                         <p><strong>Tracks:</strong> {{ playlist['tracks']['total'] }}</p>
-                        <a href="{{ playlist['external_urls']['spotify'] }}" target="_blank">View on Spotify</a>
                     </div>
                 </div>
             </li>
