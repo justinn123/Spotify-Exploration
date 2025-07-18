@@ -16,14 +16,23 @@
     <img id="album-artwork" src="{{ current_playing['item']['album']['images'][0]['url'] }}" alt="Album Artwork"
         style="height: 500px; width: 500px">
     <p><strong>Track: </strong><span id="track-name">
+        {% if current_playing['item']['external_urls']['spotify'] %}
             <a href="{{ current_playing['item']['external_urls']['spotify'] }}">
                 {{ current_playing['item']['name'] }}
             </a>
-        </span></p>
+        {% else %}
+            {{ current_playing['item']['name'] }}
+        {% endif %}
+    </span></p>
 
     <p><strong>Artists: </strong><span id="artist-name">
         {% for artist in current_playing['item']['artists'] %}
-            <a href="{{ artist['external_urls']['spotify'] }}">{{ artist['name'] }}</a>{% if not loop.last %}, {% endif %}
+            {% if artist['external_urls']['spotify'] %}
+                <a href="{{ artist['external_urls']['spotify'] }}">{{ artist['name'] }}</a>
+            {% else %}
+                {{ artist['name'] }}
+            {% endif %}
+            {% if not loop.last %}, {% endif %}
         {% endfor %}
     </span></p>
 

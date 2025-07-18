@@ -91,7 +91,8 @@ def index():
             'item': {
                 'name': 'No song currently playing',
                 'album': {'images': [{'url': sp.current_user()['images'][0]['url']}]},
-                'artists': [{'name': 'No artist'}]
+                'artists': [{'name': 'No artist', 'external_urls': {'spotify': None}}],
+                'external_urls': {'spotify': None}
             }
         }
     return render_template('index.html', username=sp.current_user()['display_name'], 
