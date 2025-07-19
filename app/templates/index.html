@@ -26,15 +26,16 @@
     </span></p>
 
     <p><strong>Artists: </strong><span id="artist-name">
-        {% for artist in current_playing['item']['artists'] %}
-            {% if artist['external_urls']['spotify'] %}
+        {%- for artist in current_playing['item']['artists'] %}
+            {%- if artist['external_urls']['spotify'] -%}
                 <a href="{{ artist['external_urls']['spotify'] }}">{{ artist['name'] }}</a>
-            {% else %}
+            {%- else -%}
                 {{ artist['name'] }}
-            {% endif %}
-            {% if not loop.last %}, {% endif %}
-        {% endfor %}
+            {%- endif -%}
+            {%- if not loop.last %}, {% endif %}
+        {%- endfor %}
     </span></p>
+
 
     <script>
         function updateCurrentPlaying() {
