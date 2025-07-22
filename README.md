@@ -1,12 +1,10 @@
 # Spotify-Exploration
-IM PRAYING THIS WORKS
-## Description
-Spotify Exploration will allow users to see their most play songs and artists and make suggestions based on that list
+This is a Flask web-app that gets my real-time Spotify activity using Spotipy and displays it. It gets the song I am currently listening and automatically updates the webpage so it stays accurate. It also has other pages that track the songs I listen to the most and my playlists.
 
 ## Technology
 This is a Flask App and utilizes the Spotipy, a lightweight Python library for the Spotify Web API.
 This library supports the usage of all the features of the Spotify Web API as well as support for user
-authorization. For the machine learning part of the project, Scikit Learn will be used for content based filtering. 
+authorization. 
 
 ### Links
 [Flask Documentation](https://flask.palletsprojects.com/en/stable/)\
